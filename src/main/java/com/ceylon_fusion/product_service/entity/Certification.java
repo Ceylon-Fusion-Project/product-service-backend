@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -31,5 +32,13 @@ public class Certification {
 
     @Column(name = "cert_active_state", columnDefinition = "TINYINT default 1")
     private boolean certActiveState;
+
+    @CreationTimestamp
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDate createdDate;
+
+    @CreationTimestamp
+    @Column(name = "updated_date", updatable = false)
+    private LocalDate updatedDate;
 
 }

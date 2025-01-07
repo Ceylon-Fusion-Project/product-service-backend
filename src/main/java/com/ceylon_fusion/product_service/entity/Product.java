@@ -44,7 +44,7 @@ public class Product {
     private LocalDate createdDate;
 
     @CreationTimestamp
-    @Column(name = "updated_date", nullable = false, updatable = false)
+    @Column(name = "updated_date", updatable = false)
     private LocalDate updatedDate;
 
     @Column(name = "product_active_state", columnDefinition = "TINYINT default 1")
