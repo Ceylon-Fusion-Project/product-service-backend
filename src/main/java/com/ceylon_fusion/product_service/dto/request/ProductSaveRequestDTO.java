@@ -1,4 +1,4 @@
-package com.ceylon_fusion.product_service.dto;
+package com.ceylon_fusion.product_service.dto.request;
 
 import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ProductDTO {
-    private Integer productID;
+public class ProductSaveRequestDTO {
     private String productCode;
     private String productName;
     private String productDescription;
@@ -20,7 +19,4 @@ public class ProductDTO {
     private double productQuantity;
     private MeasuringUnitType measuringUnitType;
     private List<String> productImageURLs;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
-    private boolean productActiveState;
 }

@@ -1,17 +1,17 @@
-package com.ceylon_fusion.product_service.dto;
+package com.ceylon_fusion.product_service.dto.response;
 
 import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ProductDTO {
+public class ProductGetAllDetailsResponseDTO {
+    //Product Details
     private Integer productID;
     private String productCode;
     private String productName;
@@ -20,7 +20,13 @@ public class ProductDTO {
     private double productQuantity;
     private MeasuringUnitType measuringUnitType;
     private List<String> productImageURLs;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
-    private boolean productActiveState;
+
+    //Certification Details
+    private List<CertificationGetAllProductDetailsResponseDTO> certificationList;
+
+    //Product Rating Details
+    private List<ProductRatingGetAllProductDetailsResponseDTO> productRatingList;
+
+    //Product Origin Details
+    private ProductOriginGetAllProductDetailsResponseDTO productOrigin;
 }

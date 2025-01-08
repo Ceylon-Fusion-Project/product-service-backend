@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Data
 public class CertificationDTO {
     private Integer certificationID;
+    private Integer productID;
     private String certificationName;
     private String issuer;
     private LocalDate issuedDate;
@@ -18,4 +19,5 @@ public class CertificationDTO {
     private boolean certActiveState;
     private LocalDate createdDate;
     private LocalDate updatedDate;
+    private String certURL;
 }

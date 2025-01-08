@@ -1,4 +1,4 @@
-package com.ceylon_fusion.product_service.dto;
+package com.ceylon_fusion.product_service.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,15 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class ProductRatingDTO {
-    private Integer productRatingID;
-    private Integer productID;
+public class ProductRatingGetAllProductDetailsResponseDTO {
     private Integer customerID;
     private Integer productRating;
     private String productReview;
     private LocalDate createdDate;
-    private LocalDate updatedDate;
 }

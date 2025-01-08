@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @Data
 public class ProductOriginDTO {
     private Integer originID;
+    private Integer productID;
     private String stateLocation;
     private String stateMapLink;
     private String partOfPlant;

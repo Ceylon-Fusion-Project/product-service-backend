@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 
@@ -12,11 +13,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Table(name = "product_rating")
 public class ProductRating {
     @Id
     @Column(name = "product_rating_id", updatable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer productRatingID;
+
+    // OneToOne -> Product
+    @OneToOne
+    @JoinColumn(name = "product_id", nullable = false, unique = true)
+    private Product product;
+
+    @Column(name = "customer_id", nullable = false)
+    private Integer customerID;
 
     @Column(name = "product_rating", nullable = false)
     private Integer productRating;
@@ -27,4 +37,8 @@ public class ProductRating {
     @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDate createdDate;
+
+    @UpdateTimestamp
+    @Column(name = "updated_date", updatable = false)
+    private LocalDate updatedDate;
 }

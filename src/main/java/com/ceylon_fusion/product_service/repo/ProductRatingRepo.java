@@ -1,11 +1,15 @@
 package com.ceylon_fusion.product_service.repo;
 
+import com.ceylon_fusion.product_service.entity.Product;
 import com.ceylon_fusion.product_service.entity.ProductRating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @EnableJpaRepositories
 public interface ProductRatingRepo extends JpaRepository<ProductRating, Long> {
+    List<ProductRating> findAllByProductEquals(Product product);
 }
