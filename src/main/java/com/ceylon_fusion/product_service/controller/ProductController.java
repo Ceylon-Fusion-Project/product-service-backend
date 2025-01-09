@@ -8,9 +8,12 @@ import com.ceylon_fusion.product_service.dto.response.ProductGetAllDetailsRespon
 import com.ceylon_fusion.product_service.service.ProductService;
 import com.ceylon_fusion.product_service.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping(path = "api/v1/product")
@@ -40,7 +43,6 @@ public class ProductController {
     @GetMapping(
             path = "/get-all-products",
             params = {"page", "size", "status"}
-
     )
     public ResponseEntity<StandardResponse> getAllProducts(
             @RequestParam(value = "status") boolean activeStatus,
@@ -92,6 +94,53 @@ public class ProductController {
             ProductDTO response = productService.updateProductDetails(productUpdateDetailsRequestDTO, productId);
             return new ResponseEntity<StandardResponse>(
                     new StandardResponse(200, "Product Updated Successfully", response.getProductName()),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<StandardResponse>(
+                    new StandardResponse(404, e.getMessage(), null),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+    }
+
+    @DeleteMapping(
+            path = "delete-product-by-id",
+            params = "id"
+    )
+    public ResponseEntity<StandardResponse> deleteProductByID(@RequestParam(value = "id") Integer productId) {
+        try {
+            String response = productService.deleteProductByID(productId);
+            return new ResponseEntity<StandardResponse>(
+                    new StandardResponse(200, response, "Product Deleted Successfully"),
+                    HttpStatus.OK
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<StandardResponse>(
+                    new StandardResponse(404, e.getMessage(), null),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+    }
+
+    @GetMapping(
+            path = "/get-product-by-filtering"
+    )
+    public ResponseEntity<StandardResponse> getProductByFiltering(
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double averageRating,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false,defaultValue = "true" ) boolean activeStatus,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        try {
+            PaginatedGetAllProductResponseDTO response = productService.getProductByFiltering(productName, minPrice, maxPrice, averageRating, startDate, endDate,activeStatus, page, size);
+            return new ResponseEntity<StandardResponse>(
+                    new StandardResponse(200, "Product Found", response),
                     HttpStatus.OK
             );
         } catch (Exception e) {

@@ -22,13 +22,13 @@ public class ProductRating {
 
     // OneToOne -> Product
     @OneToOne
-    @JoinColumn(name = "product_id", nullable = false, unique = true)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(name = "customer_id", nullable = false)
     private Integer customerID;
 
-    @Column(name = "product_rating", nullable = false)
+    @Column(name = "rating_value", nullable = false)
     private Integer productRating;
 
     @Column(name = "product_review")

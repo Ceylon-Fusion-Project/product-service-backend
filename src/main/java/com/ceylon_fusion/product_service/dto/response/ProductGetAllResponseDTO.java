@@ -13,4 +13,5 @@ public class ProductGetAllResponseDTO {
     private String productDescription;
     private Double sellingPrice;
     private String productImageURL;
+    private Double ratingAverage;
 }

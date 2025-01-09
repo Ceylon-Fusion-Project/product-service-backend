@@ -37,8 +37,7 @@ public class Product {
     private Double sellingPrice;
 
     @Column(name = "product_quantity", nullable = false)
-    private double productQuantity;
-
+    private Double productQuantity;
     @Enumerated(EnumType.STRING)
     @Column(name = "measuring_unit_type", nullable = false)
     private MeasuringUnitType measuringUnitType;

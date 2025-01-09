@@ -18,12 +18,15 @@ import com.ceylon_fusion.product_service.util.mappers.CertificationMapper;
 import com.ceylon_fusion.product_service.util.mappers.ProductMapper;
 import com.ceylon_fusion.product_service.util.mappers.ProductOriginMapper;
 import com.ceylon_fusion.product_service.util.mappers.ProductRatingMapper;
+import com.ceylon_fusion.product_service.util.specifications.ProductSpecifications;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -85,6 +88,15 @@ public class ProductServiceIMPL implements ProductService {
             List<ProductGetAllResponseDTO> productGetAllResponseDTOS = productMapper
                     .productDTOListToProductGetAllResponseDTOList(productDTOS);
 
+            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
+                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
+                    Double ratingAverage = productRatingRepo.getAverageByProductID(productGetAllResponseDTO.getProductID());
+                    productGetAllResponseDTO.setRatingAverage(ratingAverage);
+                }else{
+                    productGetAllResponseDTO.setRatingAverage(null);
+                }
+            }
+
             // Return PaginatedGetAllProductResponseDTO
             return new PaginatedGetAllProductResponseDTO(
                     productGetAllResponseDTOS,
@@ -121,6 +133,12 @@ public class ProductServiceIMPL implements ProductService {
             List<ProductRatingGetAllProductDetailsResponseDTO> productRatingList = productRatingMapper
                     .productRatingEntityListToProductRatingGetAllProductDetailsResponseDTOList(productRating);
 
+            //calculate average rating value
+            Double ratingAverage = null;
+            if(productRatingRepo.existsByProductID(productId) > 0){
+                ratingAverage = productRatingRepo.getAverageByProductID(productId);
+            }
+
             // Return ProductGetAllDetailsResponseDTO
             return new ProductGetAllDetailsResponseDTO(
                     productDTO.getProductID(),
@@ -131,6 +149,7 @@ public class ProductServiceIMPL implements ProductService {
                     productDTO.getProductQuantity(),
                     productDTO.getMeasuringUnitType(),
                     productDTO.getProductImageURLs(),
+                    ratingAverage,
                     certificationsList,
                     productRatingList,
                     productOriginResponse
@@ -141,7 +160,10 @@ public class ProductServiceIMPL implements ProductService {
     }
 
     @Override
-    public ProductDTO updateProductDetails(ProductUpdateDetailsRequestDTO productUpdateDetailsRequestDTO, Integer productId) {
+    public ProductDTO updateProductDetails(
+            ProductUpdateDetailsRequestDTO productUpdateDetailsRequestDTO,
+            Integer productId)
+    {
 
         // Get Product by Product ID
         if (productRepo.existsById(productId)) {
@@ -189,6 +211,66 @@ public class ProductServiceIMPL implements ProductService {
             return modelMapper.map(existingProduct, ProductDTO.class);
         }else{
             throw new RuntimeException("Product Not Found");
+        }
+    }
+
+    @Override
+    public String deleteProductByID(Integer productId) {
+        // Get Product by Product ID
+        if (productRepo.existsById(productId)) {
+            String response = productRepo.getReferenceById(productId).getProductName() + " Deleted!";
+
+            //delete product
+            productRepo.deleteById(productId);
+            return response;
+        } else {
+            throw new RuntimeException("Product Not Found");
+        }
+    }
+
+    @Override
+    public PaginatedGetAllProductResponseDTO getProductByFiltering(
+            String productName,
+            Double minPrice,
+            Double maxPrice,
+            Double averageRating,
+            LocalDate startDate,
+            LocalDate endDate,
+            boolean activeStatus,
+            Integer page,
+            Integer size)
+    {
+        Specification<Product> specification = Specification.
+        where(ProductSpecifications.isActive(activeStatus))
+                .and(ProductSpecifications.hasName(productName))
+                .and(ProductSpecifications.hasPriceRange(minPrice, maxPrice))
+                .and(ProductSpecifications.hasAverageRating(averageRating))
+                .and(ProductSpecifications.hasCreatedDate(startDate, endDate));
+
+        // Get all products with active status
+        Page<Product> products = productRepo.findAll(specification,PageRequest.of(page, size));
+        if (!products.isEmpty()) {
+            // Map Product Entity List to Product DTO List
+            List<ProductDTO> productDTOS = productMapper.ProductEntityListToProductDTOList(products);
+
+            // Map Product DTO List to ProductGetAllResponseDTO List
+            List<ProductGetAllResponseDTO> productGetAllResponseDTOS = productMapper
+                    .productDTOListToProductGetAllResponseDTOList(productDTOS);
+
+            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
+                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
+                    Double ratingAverage = productRatingRepo.getAverageByProductID(productGetAllResponseDTO.getProductID());
+                    productGetAllResponseDTO.setRatingAverage(ratingAverage);
+                }else{
+                    productGetAllResponseDTO.setRatingAverage(null);
+                }
+            }
+            return new PaginatedGetAllProductResponseDTO(
+                    productGetAllResponseDTOS,
+                    productRepo.count(specification)
+            );
+        }else {
+            throw new RuntimeException("No Products Found");
         }
     }
 }
