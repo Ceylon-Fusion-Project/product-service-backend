@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -77,9 +78,9 @@ public class ProductServiceIMPL implements ProductService {
     }
 
     @Override
-    public PaginatedGetAllProductResponseDTO getAllProducts(boolean activeStatus, Integer page, Integer size) {
+    public PaginatedGetAllProductResponseDTO getAllProductsSorted(boolean activeStatus, Pageable pageable) {
         // Get all products with active status
-        Page<Product> products = productRepo.findAllByProductActiveStateEquals(activeStatus, PageRequest.of(page, size));
+        Page<Product> products = productRepo.findAllByProductActiveStateEquals(activeStatus, pageable);
         if (!products.isEmpty()) {
             // Map Product Entity List to Product DTO List
             List<ProductDTO> productDTOS = productMapper.ProductEntityListToProductDTOList(products);
@@ -88,14 +89,14 @@ public class ProductServiceIMPL implements ProductService {
             List<ProductGetAllResponseDTO> productGetAllResponseDTOS = productMapper
                     .productDTOListToProductGetAllResponseDTOList(productDTOS);
 
-            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
-                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
-                    Double ratingAverage = productRatingRepo.getAverageByProductID(productGetAllResponseDTO.getProductID());
-                    productGetAllResponseDTO.setRatingAverage(ratingAverage);
-                }else{
-                    productGetAllResponseDTO.setRatingAverage(null);
-                }
-            }
+//            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
+//                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
+//                    Double ratingAverage = productRatingRepo.getAverageByProductID(productGetAllResponseDTO.getProductID());
+//                    productGetAllResponseDTO.setRatingAverage(ratingAverage);
+//                }else{
+//                    productGetAllResponseDTO.setRatingAverage(null);
+//                }
+//            }
 
             // Return PaginatedGetAllProductResponseDTO
             return new PaginatedGetAllProductResponseDTO(
@@ -132,12 +133,13 @@ public class ProductServiceIMPL implements ProductService {
             List<ProductRating> productRating = productRatingRepo.findAllByProductEquals(product);
             List<ProductRatingGetAllProductDetailsResponseDTO> productRatingList = productRatingMapper
                     .productRatingEntityListToProductRatingGetAllProductDetailsResponseDTOList(productRating);
+         //   List<ProductRatingDTO> productRatingDTOList = productRatingMapper.productRatingEntityListToProductRatingDTOList(productRating);
 
-            //calculate average rating value
-            Double ratingAverage = null;
-            if(productRatingRepo.existsByProductID(productId) > 0){
-                ratingAverage = productRatingRepo.getAverageByProductID(productId);
-            }
+//            //calculate average rating value
+//            Double ratingAverage = null;
+//            if(productRatingRepo.existsByProductID(productId) > 0){
+//                ratingAverage = productRatingRepo.getAverageByProductID(productId);
+//            }
 
             // Return ProductGetAllDetailsResponseDTO
             return new ProductGetAllDetailsResponseDTO(
@@ -149,7 +151,7 @@ public class ProductServiceIMPL implements ProductService {
                     productDTO.getProductQuantity(),
                     productDTO.getMeasuringUnitType(),
                     productDTO.getProductImageURLs(),
-                    ratingAverage,
+                    productDTO.getProductRatingValue(),
                     certificationsList,
                     productRatingList,
                     productOriginResponse
@@ -237,8 +239,8 @@ public class ProductServiceIMPL implements ProductService {
             LocalDate startDate,
             LocalDate endDate,
             boolean activeStatus,
-            Integer page,
-            Integer size)
+            Pageable pageable
+    )
     {
         Specification<Product> specification = Specification.
         where(ProductSpecifications.isActive(activeStatus))
@@ -248,7 +250,7 @@ public class ProductServiceIMPL implements ProductService {
                 .and(ProductSpecifications.hasCreatedDate(startDate, endDate));
 
         // Get all products with active status
-        Page<Product> products = productRepo.findAll(specification,PageRequest.of(page, size));
+        Page<Product> products = productRepo.findAll(specification,pageable);
         if (!products.isEmpty()) {
             // Map Product Entity List to Product DTO List
             List<ProductDTO> productDTOS = productMapper.ProductEntityListToProductDTOList(products);
@@ -257,14 +259,14 @@ public class ProductServiceIMPL implements ProductService {
             List<ProductGetAllResponseDTO> productGetAllResponseDTOS = productMapper
                     .productDTOListToProductGetAllResponseDTOList(productDTOS);
 
-            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
-                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
-                    Double ratingAverage = productRatingRepo.getAverageByProductID(productGetAllResponseDTO.getProductID());
-                    productGetAllResponseDTO.setRatingAverage(ratingAverage);
-                }else{
-                    productGetAllResponseDTO.setRatingAverage(null);
-                }
-            }
+//            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
+//                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
+//                    Double ratingAverage = productRatingRepo.getAverageByProductID(productGetAllResponseDTO.getProductID());
+//                    productGetAllResponseDTO.setRatingAverage(ratingAverage);
+//                }else{
+//                    productGetAllResponseDTO.setRatingAverage(null);
+//                }
+//            }
             return new PaginatedGetAllProductResponseDTO(
                     productGetAllResponseDTOS,
                     productRepo.count(specification)

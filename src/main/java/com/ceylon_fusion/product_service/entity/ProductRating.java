@@ -20,13 +20,13 @@ public class ProductRating {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer productRatingID;
 
-    // OneToOne -> Product
-    @OneToOne
+    // OneToMany -> Product
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "customer_id", nullable = false)
-    private Integer customerID;
+    @Column(name = "customer", nullable = false)
+    private Integer customer;
 
     @Column(name = "rating_value", nullable = false)
     private Integer productRating;
@@ -41,4 +41,11 @@ public class ProductRating {
     @UpdateTimestamp
     @Column(name = "updated_date", updatable = false)
     private LocalDate updatedDate;
+
+    public ProductRating(Product product, Integer customer, Integer productRating, String productReview) {
+        this.product = product;
+        this.customer = customer;
+        this.productRating = productRating;
+        this.productReview = productReview;
+    }
 }

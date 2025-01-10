@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class ProductRatingDTO {
     private Integer productRatingID;
     private Integer productID;
-    private Integer customerID;
+    private Integer customer;
     private Integer productRating;
     private String productReview;
     private LocalDate createdDate;

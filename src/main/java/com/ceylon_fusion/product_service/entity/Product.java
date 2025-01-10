@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -59,16 +60,19 @@ public class Product {
     @Column(name = "product_active_state",columnDefinition = "BOOLEAN DEFAULT TRUE", insertable = false,updatable = true)
     private boolean productActiveState;
 
+    @Column(name = "product_avg_rating")
+    private Double productRatingValue = 0.0;
+
     // OneToMany -> Certification
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Certification> certifications;
+    private Set<Certification> certifications;
 
     // OneToOne -> ProductOrigin
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductOrigin productOrigin;
 
-    // OneToOne -> ProductRating
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ProductRating productRating;
+    // OneToMany -> ProductRating
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductRating> productRating;
 
 }

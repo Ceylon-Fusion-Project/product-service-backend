@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class ProductRatingGetAllProductDetailsResponseDTO {
-    private Integer customerID;
+    private Integer customer;
     private Integer productRating;
     private String productReview;
     private LocalDate createdDate;

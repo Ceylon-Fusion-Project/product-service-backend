@@ -8,6 +8,8 @@ import com.ceylon_fusion.product_service.dto.response.ProductGetAllDetailsRespon
 import com.ceylon_fusion.product_service.service.ProductService;
 import com.ceylon_fusion.product_service.util.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,13 +46,54 @@ public class ProductController {
             path = "/get-all-products",
             params = {"page", "size", "status"}
     )
-    public ResponseEntity<StandardResponse> getAllProducts(
-            @RequestParam(value = "status") boolean activeStatus,
-            @RequestParam(value = "page") Integer page,
-            @RequestParam(value = "size") Integer size
+    public ResponseEntity<StandardResponse> getAllProductsWithSort(
+            @RequestParam(value = "status",defaultValue = "true",required = false) boolean activeStatus,
+            @RequestParam(value = "sort",required = false,defaultValue = "nameAsc") String sort,
+            @RequestParam(value = "page", defaultValue = "0",required = false) Integer page,
+            @RequestParam(value = "size", defaultValue = "10",required = false) Integer size
     ) {
         try {
-            PaginatedGetAllProductResponseDTO response = productService.getAllProducts(activeStatus, page, size);
+            // Sort Specification
+            Sort sortSpec;
+            switch (sort) {
+                case "nameAsc":
+                    sortSpec = Sort.by("productName").ascending();
+                    break;
+                case "nameDesc":
+                    sortSpec = Sort.by("productName").descending();
+                    break;
+                case "priceAsc":
+                    sortSpec = Sort.by("sellingPrice").ascending();
+                    break;
+                case "priceDesc":
+                    sortSpec = Sort.by("sellingPrice").descending();
+                    break;
+                case "ratingAsc":
+                    sortSpec = Sort.by("productRatingValue").ascending();
+                    break;
+                case "ratingDesc":
+                    sortSpec = Sort.by("productRatingValue").descending();
+                    break;
+                case "oldest":
+                    sortSpec = Sort.by("createdDate").ascending();
+                    break;
+                case "newest":
+                    sortSpec = Sort.by("createdDate").descending();
+                    break;
+                case "quantityAsc":
+                    sortSpec = Sort.by("productQuantity").ascending();
+                    break;
+                case "quantityDesc":
+                    sortSpec = Sort.by("productQuantity").descending();
+                    break;
+                default:
+                    sortSpec = Sort.by("productName").ascending();
+            }
+
+            // Page Request Specification
+            PageRequest pageRequest = PageRequest.of(page, size, sortSpec);
+
+            PaginatedGetAllProductResponseDTO response = productService.getAllProductsSorted(activeStatus, pageRequest);
             return new ResponseEntity<StandardResponse>(
                     new StandardResponse(200, "All Products", response),
                     HttpStatus.OK
@@ -134,11 +177,51 @@ public class ProductController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false,defaultValue = "true" ) boolean activeStatus,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size
+            @RequestParam(value = "sort",required = false,defaultValue = "nameAsc") String sort,
+            @RequestParam(required = false,defaultValue = "0") Integer page,
+            @RequestParam(required = false,defaultValue = "10") Integer size
     ) {
         try {
-            PaginatedGetAllProductResponseDTO response = productService.getProductByFiltering(productName, minPrice, maxPrice, averageRating, startDate, endDate,activeStatus, page, size);
+            // Sort Specification
+            Sort sortSpec;
+            switch (sort) {
+                case "nameAsc":
+                    sortSpec = Sort.by("productName").ascending();
+                    break;
+                case "nameDesc":
+                    sortSpec = Sort.by("productName").descending();
+                    break;
+                case "priceAsc":
+                    sortSpec = Sort.by("sellingPrice").ascending();
+                    break;
+                case "priceDesc":
+                    sortSpec = Sort.by("sellingPrice").descending();
+                    break;
+                case "ratingAsc":
+                    sortSpec = Sort.by("productRatingValue").ascending();
+                    break;
+                case "ratingDesc":
+                    sortSpec = Sort.by("productRatingValue").descending();
+                    break;
+                case "oldest":
+                    sortSpec = Sort.by("createdDate").ascending();
+                    break;
+                case "newest":
+                    sortSpec = Sort.by("createdDate").descending();
+                    break;
+                case "quantityAsc":
+                    sortSpec = Sort.by("productQuantity").ascending();
+                    break;
+                case "quantityDesc":
+                    sortSpec = Sort.by("productQuantity").descending();
+                    break;
+                default:
+                    sortSpec = Sort.by("productName").ascending();
+            }
+
+            // Page Request Specification
+            PageRequest pageRequest = PageRequest.of(page, size, sortSpec);
+            PaginatedGetAllProductResponseDTO response = productService.getProductByFiltering(productName, minPrice, maxPrice, averageRating, startDate, endDate,activeStatus, pageRequest);
             return new ResponseEntity<StandardResponse>(
                     new StandardResponse(200, "Product Found", response),
                     HttpStatus.OK

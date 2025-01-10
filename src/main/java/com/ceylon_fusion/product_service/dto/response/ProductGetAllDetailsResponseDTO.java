@@ -20,7 +20,7 @@ public class ProductGetAllDetailsResponseDTO {
     private double productQuantity;
     private MeasuringUnitType measuringUnitType;
     private List<String> productImageURLs;
-    private Double ratingAverage;
+    private Double productRatingValue;
 
     //Certification Details
     private List<CertificationGetAllProductDetailsResponseDTO> certificationList;

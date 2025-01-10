@@ -19,4 +19,5 @@ public interface ProductRatingRepo extends JpaRepository<ProductRating, Long> {
 
     @Query(value = "select count(*) from product_rating where product_id = ?1", nativeQuery = true)
     Integer existsByProductID(Integer productID);
+
 }
