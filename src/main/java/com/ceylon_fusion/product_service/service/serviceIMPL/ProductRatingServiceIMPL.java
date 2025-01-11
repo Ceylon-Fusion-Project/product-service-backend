@@ -185,7 +185,7 @@ public class ProductRatingServiceIMPL implements ProductRatingService {
 
             return "Rating Deleted Successfully and Product Rating of " + product.getProductName() + " is Updated!";
         } else {
-            throw new RuntimeException("Product Not Found");
+            throw new RuntimeException("Product Rating Not Found");
         }
     }
 }

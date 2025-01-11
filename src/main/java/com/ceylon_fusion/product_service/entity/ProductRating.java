@@ -1,9 +1,11 @@
 package com.ceylon_fusion.product_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -23,6 +25,8 @@ public class ProductRating {
     // OneToMany -> Product
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
+    @JsonBackReference
+    @ToString.Exclude
     private Product product;
 
     @Column(name = "customer", nullable = false)

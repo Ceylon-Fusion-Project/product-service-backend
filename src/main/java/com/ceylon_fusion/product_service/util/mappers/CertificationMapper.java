@@ -9,7 +9,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CertificationMapper {
-    List<CertificationDTO> certificationEntityListToCertificationDTOList(List<Certification> certifications);
-
     List<CertificationGetAllProductDetailsResponseDTO> certificationEntityListToCertificationGetAllProductDetailsResponseDTOList(List<Certification> certifications);
+
+    CertificationDTO certificationEntityToCertificationDTO(Certification newCertification);
+
+    List<CertificationDTO> certificationEntityListToCertificationDTOList(List<Certification> content);
 }

@@ -1,10 +1,12 @@
 package com.ceylon_fusion.product_service.entity;
 
 import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -65,14 +67,20 @@ public class Product {
 
     // OneToMany -> Certification
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
     private Set<Certification> certifications;
 
     // OneToOne -> ProductOrigin
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
     private ProductOrigin productOrigin;
 
     // OneToMany -> ProductRating
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
     private Set<ProductRating> productRating;
 
 }

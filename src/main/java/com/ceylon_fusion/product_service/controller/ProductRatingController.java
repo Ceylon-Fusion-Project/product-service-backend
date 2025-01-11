@@ -160,7 +160,7 @@ public class ProductRatingController {
         try {
             String response = productRatingService.deleteProductRatingByID(productRatingId);
             return new ResponseEntity<StandardResponse>(
-                    new StandardResponse(200, response, "Product Deleted Successfully"),
+                    new StandardResponse(200, response, "Product Rating Deleted Successfully"),
                     HttpStatus.OK
             );
         } catch (Exception e) {
