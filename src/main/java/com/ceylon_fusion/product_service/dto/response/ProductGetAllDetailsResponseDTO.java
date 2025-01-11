@@ -26,7 +26,7 @@ public class ProductGetAllDetailsResponseDTO {
     private List<CertificationGetAllProductDetailsResponseDTO> certificationList;
 
     //Product Rating Details
-    private List<ProductRatingGetAllProductDetailsResponseDTO> productRatingList;
+    private List<ProductRatingGetAllByProductDetailsResponseDTO> productRatingList;
 
     //Product Origin Details
     private ProductOriginGetAllProductDetailsResponseDTO productOrigin;

@@ -21,5 +21,7 @@ public interface ProductService {
 
     String deleteProductByID(Integer productId);
 
-    PaginatedGetAllProductResponseDTO getProductByFiltering(String productName, Double minPrice, Double maxPrice, Double averageRating, LocalDate startDate, LocalDate endDate,boolean activeStatus, Pageable pageable);
+    PaginatedGetAllProductResponseDTO getProductByFiltering(
+            String productName, Double minPrice, Double maxPrice, Double averageRating, LocalDate startDate,
+            LocalDate endDate, boolean activeStatus, Pageable pageable);
 }

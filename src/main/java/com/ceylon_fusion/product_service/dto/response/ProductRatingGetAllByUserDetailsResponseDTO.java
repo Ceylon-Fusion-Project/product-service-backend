@@ -6,12 +6,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class ProductRatingGetAllProductDetailsResponseDTO {
-    private Integer customer;
+public class ProductRatingGetAllByUserDetailsResponseDTO {
+    private Integer productRatingID;
+    private Integer productID;
     private Integer productRating;
     private String productReview;
     private LocalDate createdDate;
+    private LocalDate updatedDate;
 }

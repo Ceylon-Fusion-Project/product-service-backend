@@ -23,6 +23,4 @@ public interface ProductRepo extends JpaRepository<Product, Integer>, JpaSpecifi
 
     Product findProductByProductIDEquals(Integer productId);
 
-    //Page<Product> findAll(Specification<Product> specification, Pageable pageable);
-
 }

@@ -22,7 +22,6 @@ import com.ceylon_fusion.product_service.util.specifications.ProductSpecificatio
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -129,11 +128,19 @@ public class ProductServiceIMPL implements ProductService {
                     .productOriginEntityToProductOriginGetAllProductDetailsResponseDTO(productOrigin);
 
             //Get Product Rating by Product
-            // Map Product Rating Entity List to ProductRatingGetAllProductDetailsResponseDTO List
+            // Map Product Rating Entity List to ProductRatingGetAllByProductDetailsResponseDTO List
             List<ProductRating> productRating = productRatingRepo.findAllByProductEquals(product);
-            List<ProductRatingGetAllProductDetailsResponseDTO> productRatingList = productRatingMapper
+           List<ProductRatingGetAllByProductDetailsResponseDTO> productRatingList = productRatingMapper
                     .productRatingEntityListToProductRatingGetAllProductDetailsResponseDTOList(productRating);
-         //   List<ProductRatingDTO> productRatingDTOList = productRatingMapper.productRatingEntityListToProductRatingDTOList(productRating);
+
+//            List<ProductRatingDTO> productRatingDTOList = productRatingMapper.productRatingEntityListToProductRatingDTOList(productRating);
+//
+//            if (!productRatingDTOList.isEmpty()) {
+//                for(ProductRatingDTO productRatingDTO : productRatingDTOList) {
+//                    int index = productRatingDTOList.indexOf(productRatingDTO);
+//                    productRatingDTO.setProductID(productRating.get(index).getProduct().getProductID());
+//                }
+//            }
 
 //            //calculate average rating value
 //            Double ratingAverage = null;
@@ -164,46 +171,44 @@ public class ProductServiceIMPL implements ProductService {
     @Override
     public ProductDTO updateProductDetails(
             ProductUpdateDetailsRequestDTO productUpdateDetailsRequestDTO,
-            Integer productId)
-    {
+            Integer productId) {
 
-        // Get Product by Product ID
         if (productRepo.existsById(productId)) {
-            // Get Product by Product ID and Map Product Entity to Product DTO
+            // Get Product by Product ID
             Product existingProduct = productRepo.getReferenceById(productId);
 
             // Update Product name
-            if(productUpdateDetailsRequestDTO.getProductName() != null){
+            if (productUpdateDetailsRequestDTO.getProductName() != null) {
                 existingProduct.setProductName(productUpdateDetailsRequestDTO.getProductName());
             }
 
             // Update Product Description
-            if(productUpdateDetailsRequestDTO.getProductDescription() != null){
+            if (productUpdateDetailsRequestDTO.getProductDescription() != null) {
                 existingProduct.setProductDescription(productUpdateDetailsRequestDTO.getProductDescription());
             }
 
             // Update Selling Price
-            if(productUpdateDetailsRequestDTO.getSellingPrice() >= 0){
+            if (productUpdateDetailsRequestDTO.getSellingPrice() >= 0) {
                 existingProduct.setSellingPrice(productUpdateDetailsRequestDTO.getSellingPrice());
             }
 
             // Update Product Quantity
-            if(productUpdateDetailsRequestDTO.getProductQuantity() >= 0){
+            if (productUpdateDetailsRequestDTO.getProductQuantity() >= 0) {
                 existingProduct.setProductQuantity(productUpdateDetailsRequestDTO.getProductQuantity());
             }
 
             // Update Measuring Unit Type
-            if(productUpdateDetailsRequestDTO.getMeasuringUnitType() != null){
+            if (productUpdateDetailsRequestDTO.getMeasuringUnitType() != null) {
                 existingProduct.setMeasuringUnitType(productUpdateDetailsRequestDTO.getMeasuringUnitType());
             }
 
             // Update Product Image URLs
-            if(productUpdateDetailsRequestDTO.getProductImageURLs() != null){
+            if (productUpdateDetailsRequestDTO.getProductImageURLs() != null) {
                 existingProduct.setProductImageURLs(productUpdateDetailsRequestDTO.getProductImageURLs());
             }
 
             // Update Product Active State
-            if(productUpdateDetailsRequestDTO.isProductActiveState() != existingProduct.isProductActiveState()){
+            if (productUpdateDetailsRequestDTO.isProductActiveState() != existingProduct.isProductActiveState()) {
                 existingProduct.setProductActiveState(productUpdateDetailsRequestDTO.isProductActiveState());
             }
 
@@ -211,7 +216,7 @@ public class ProductServiceIMPL implements ProductService {
             productRepo.save(existingProduct);
 
             return modelMapper.map(existingProduct, ProductDTO.class);
-        }else{
+        } else {
             throw new RuntimeException("Product Not Found");
         }
     }
@@ -240,17 +245,16 @@ public class ProductServiceIMPL implements ProductService {
             LocalDate endDate,
             boolean activeStatus,
             Pageable pageable
-    )
-    {
+    ) {
         Specification<Product> specification = Specification.
-        where(ProductSpecifications.isActive(activeStatus))
+                where(ProductSpecifications.isActive(activeStatus))
                 .and(ProductSpecifications.hasName(productName))
                 .and(ProductSpecifications.hasPriceRange(minPrice, maxPrice))
                 .and(ProductSpecifications.hasAverageRating(averageRating))
                 .and(ProductSpecifications.hasCreatedDate(startDate, endDate));
 
         // Get all products with active status
-        Page<Product> products = productRepo.findAll(specification,pageable);
+        Page<Product> products = productRepo.findAll(specification, pageable);
         if (!products.isEmpty()) {
             // Map Product Entity List to Product DTO List
             List<ProductDTO> productDTOS = productMapper.ProductEntityListToProductDTOList(products);
@@ -271,7 +275,7 @@ public class ProductServiceIMPL implements ProductService {
                     productGetAllResponseDTOS,
                     productRepo.count(specification)
             );
-        }else {
+        } else {
             throw new RuntimeException("No Products Found");
         }
     }

@@ -166,9 +166,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(
-            path = "/get-product-by-filtering"
-    )
+    @GetMapping(path = "/get-product-by-filtering")
     public ResponseEntity<StandardResponse> getProductByFiltering(
             @RequestParam(required = false) String productName,
             @RequestParam(required = false) Double minPrice,
