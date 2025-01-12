@@ -88,7 +88,7 @@ public class CertificationController {
             path = "/update-certificate",
             params = "certificationID"
     )
-    public ResponseEntity<StandardResponse> updateProductDetails(
+    public ResponseEntity<StandardResponse> updateCertificateDetails(
             @RequestBody CertificationUpdateRequestDTO certificationUpdateRequestDTO,
             @RequestParam(value = "certificationID") Integer certificationId
     ) {
@@ -126,5 +126,4 @@ public class CertificationController {
             );
         }
     }
-
 }

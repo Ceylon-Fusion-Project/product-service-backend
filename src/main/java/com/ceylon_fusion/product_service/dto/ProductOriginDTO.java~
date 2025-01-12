@@ -26,5 +26,4 @@ public class ProductOriginDTO {
     private String demoVideoLink;
     private LocalDate createdDate;
     private LocalDate updatedDate;
-    private String originCode;
 }

@@ -1,6 +1,7 @@
 package com.ceylon_fusion.product_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -22,12 +24,11 @@ public class ProductOrigin {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer originID;
 
-    // OneToOne -> Product
-    @OneToOne
-    @JoinColumn(name = "product_id", nullable = false, unique = true)
-    @JsonBackReference
+    //OneToMany -> Product
+    @OneToMany(mappedBy = "productOrigin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     @ToString.Exclude
-    private Product product;
+    private Set<Product> product;
 
     @Column(name = "state_location", nullable = false)
     private String stateLocation;
@@ -61,6 +62,8 @@ public class ProductOrigin {
     @Column(name = "updated_date", updatable = false)
     private LocalDate updatedDate;
 
+    @Column(name = "origin_code", nullable = false, unique = true)
+    private String originCode;
 
 }
 

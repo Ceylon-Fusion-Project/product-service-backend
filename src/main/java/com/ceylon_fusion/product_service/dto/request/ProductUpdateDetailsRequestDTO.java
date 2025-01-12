@@ -18,4 +18,5 @@ public class ProductUpdateDetailsRequestDTO {
     private MeasuringUnitType measuringUnitType;
     private List<String> productImageURLs;
     private boolean productActiveState;
+    private Integer productOrigin;
 }

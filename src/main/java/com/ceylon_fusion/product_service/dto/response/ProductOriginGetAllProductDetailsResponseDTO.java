@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class ProductOriginGetAllProductDetailsResponseDTO {
+    private Integer originID;
     private String stateLocation;
     private String stateMapLink;
     private String partOfPlant;
@@ -16,4 +17,5 @@ public class ProductOriginGetAllProductDetailsResponseDTO {
     private String factoryAddress;
     private String factoryMapLink;
     private String demoVideoLink;
+    private String originCode;
 }

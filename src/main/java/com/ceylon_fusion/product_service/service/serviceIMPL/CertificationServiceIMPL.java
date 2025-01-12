@@ -40,8 +40,6 @@ public class CertificationServiceIMPL implements CertificationService {
     @Override
     public CertificationDTO saveCertificate(CertificateSaveRequestDTO certificateSaveRequestDTO) {
         Integer productId = certificateSaveRequestDTO.getProductID();
-        System.out.println("Id" + productId);
-        System.out.println("saveDTO"+certificateSaveRequestDTO);
 
         if(productRepo.existsById(productId)) {
 
@@ -53,7 +51,6 @@ public class CertificationServiceIMPL implements CertificationService {
                     certificateSaveRequestDTO.getExpiryDate(),
                     certificateSaveRequestDTO.getCertURL()
             );
-            System.out.println("newCertification = " + newCertification);
             certificationRepo.save(newCertification);
 
             return certificationMapper.certificationEntityToCertificationDTO(newCertification);
@@ -124,8 +121,6 @@ public class CertificationServiceIMPL implements CertificationService {
             }
 
             certificationRepo.save(existingCertification);
-
-            //return "Product Rating of " + product.getProductName() + " is Updated!";
 
             return certificationMapper.certificationEntityToCertificationDTO(existingCertification);
         }else{

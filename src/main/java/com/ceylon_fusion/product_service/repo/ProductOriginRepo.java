@@ -11,4 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface ProductOriginRepo extends JpaRepository<ProductOrigin, Integer> {
 
     ProductOrigin findProductOriginByProductEquals(Product product);
+
+    ProductOrigin findProductOriginByProduct(Product product);
+
+    boolean existsByOriginCodeEqualsIgnoreCase(String originCode);
 }

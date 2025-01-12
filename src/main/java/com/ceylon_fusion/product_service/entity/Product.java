@@ -1,6 +1,7 @@
 package com.ceylon_fusion.product_service.entity;
 
 import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -71,9 +72,10 @@ public class Product {
     @ToString.Exclude
     private Set<Certification> certifications;
 
-    // OneToOne -> ProductOrigin
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    // ManyToOne -> ProductOrigin
+    @ManyToOne
+    @JoinColumn(name = "origin_id")
+    @JsonBackReference
     @ToString.Exclude
     private ProductOrigin productOrigin;
 

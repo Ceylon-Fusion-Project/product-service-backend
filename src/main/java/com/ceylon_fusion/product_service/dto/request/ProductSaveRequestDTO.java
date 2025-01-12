@@ -19,4 +19,5 @@ public class ProductSaveRequestDTO {
     private double productQuantity;
     private MeasuringUnitType measuringUnitType;
     private List<String> productImageURLs;
+    private Integer productOrigin;
 }

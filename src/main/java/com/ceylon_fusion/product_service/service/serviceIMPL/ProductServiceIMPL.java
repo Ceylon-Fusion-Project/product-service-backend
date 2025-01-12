@@ -64,11 +64,17 @@ public class ProductServiceIMPL implements ProductService {
 
         if (!productRepo.existsByProductCodeEqualsIgnoreCase(productSaveRequestDTO.getProductCode())) {
             // Map ProductSaveRequestDTO to Product Entity and save
-            Product newProduct = modelMapper.map(productSaveRequestDTO, Product.class);
-            productRepo.save(newProduct);
+            if(!productOriginRepo.existsById(productSaveRequestDTO.getProductOrigin()) &&
+                productSaveRequestDTO.getProductOrigin() != null) {
+                throw new RuntimeException("Invalid Product Origin ID");
+            }else {
+                Product newProduct = modelMapper.map(productSaveRequestDTO, Product.class);
+                newProduct.setProductOrigin(productOriginRepo.getReferenceById(productSaveRequestDTO.getProductOrigin()));
+                productRepo.save(newProduct);
 
-            // Map Product Entity to Product DTO and return
-            return modelMapper.map(newProduct, ProductDTO.class);
+                // Map Product Entity to Product DTO and return
+                return modelMapper.map(newProduct, ProductDTO.class);
+            }
         } else {
             // Throw a custom exception
             throw new RuntimeException("Product with code '" + productSaveRequestDTO
@@ -210,6 +216,10 @@ public class ProductServiceIMPL implements ProductService {
             // Update Product Active State
             if (productUpdateDetailsRequestDTO.isProductActiveState() != existingProduct.isProductActiveState()) {
                 existingProduct.setProductActiveState(productUpdateDetailsRequestDTO.isProductActiveState());
+            }
+
+            if(productUpdateDetailsRequestDTO.getProductOrigin() != null){
+                existingProduct.setProductOrigin(productOriginRepo.getReferenceById(productUpdateDetailsRequestDTO.getProductOrigin()));
             }
 
             // Save the updated Product

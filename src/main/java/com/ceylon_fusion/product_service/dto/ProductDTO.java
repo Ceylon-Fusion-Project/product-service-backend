@@ -24,4 +24,5 @@ public class ProductDTO {
     private LocalDate updatedDate;
     private boolean productActiveState;
     private Double productRatingValue;
+    private Integer productOriginID;
 }

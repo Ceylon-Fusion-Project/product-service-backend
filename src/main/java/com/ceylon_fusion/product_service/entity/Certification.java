@@ -42,7 +42,7 @@ public class Certification {
     private LocalDate expiryDate;
 
     @Column(name = "cert_active_state", columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private boolean certActiveState;
+    private boolean certActiveState = true;
 
     @CreationTimestamp
     @Column(name = "created_date", updatable = false)

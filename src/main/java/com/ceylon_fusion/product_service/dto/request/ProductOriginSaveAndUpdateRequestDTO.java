@@ -1,21 +1,13 @@
-package com.ceylon_fusion.product_service.dto;
+package com.ceylon_fusion.product_service.dto.request;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ProductOriginDTO {
-    private Integer originID;
+public class ProductOriginSaveAndUpdateRequestDTO {
     private String stateLocation;
     private String stateMapLink;
     private String partOfPlant;
@@ -24,7 +16,5 @@ public class ProductOriginDTO {
     private String factoryAddress;
     private String factoryMapLink;
     private String demoVideoLink;
-    private LocalDate createdDate;
-    private LocalDate updatedDate;
     private String originCode;
 }
