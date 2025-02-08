@@ -1,0 +1,28 @@
+package com.ceylon_fusion.product_service.dto;
+
+import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class ProductDTO {
+    private Integer productID;
+    private String productCode;
+    private String productName;
+    private String productDescription;
+    private Double sellingPrice;
+    private double productQuantity;
+    private MeasuringUnitType measuringUnitType;
+    private List<String> productImageURLs;
+    private LocalDate createdDate;
+    private LocalDate updatedDate;
+    private boolean productActiveState;
+    private Double productRatingValue;
+    private Integer productOriginID;
+}
