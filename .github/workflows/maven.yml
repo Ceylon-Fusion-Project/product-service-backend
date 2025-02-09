@@ -1,0 +1,78 @@
+name: "Backend Build and Security Scan"
+
+on:
+  push:
+    branches:
+      - "development"
+      - "main"
+    paths:
+      - product-service/**
+      - .github/workflows/maven.yml
+
+  pull_request:
+    branches:
+      - "development"
+      - "main"
+    paths:
+      - product-service/**
+      - .github/workflows/maven.yml
+
+  schedule:
+    - cron: "0 0 * * 0"  # Runs every Sunday at midnight
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  backend:
+    name: Build and Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Set up Java 17 (Amazon Corretto)
+      - name: Set up JDK 17 (Corretto)
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'corretto'
+          cache: maven
+
+      # Step 3: Build the Java Project with Maven Wrapper
+      - name: Build Java Code
+        run: |
+          echo "Building Java project with Maven in the product-service directory..."
+          cd product-service
+          ./mvnw clean compile -DskipTests
+
+      # Step 4: OWASP Dependency-Check for Vulnerabilities (Maven Plugin)
+      - name: Run OWASP Dependency-Check
+        run: |
+          echo "Running OWASP Dependency-Check..."
+          cd product-service
+          ./mvnw org.owasp:dependency-check-maven:check -Dformat=ALL
+        continue-on-error: true  # Allow workflow to continue even if vulnerabilities are found
+
+      # Step 5: (Optional) Trivy Security Scanner (Application-level & Dependency scan)
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+        continue-on-error: true  # Allow workflow to continue even if vulnerabilities are found
+
+      # Step 6: (Optional) CodeQL Manual Setup (For private repo)
+      - name: Setup CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: "java"
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
