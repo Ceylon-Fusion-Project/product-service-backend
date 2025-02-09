@@ -23,6 +23,7 @@ on:
 permissions:
   contents: write
   actions: read
+  security-events: write  # Required for CodeQL to work
 
 jobs:
   backend:
@@ -52,20 +53,24 @@ jobs:
       - name: Grant execute permission for Maven wrapper
         run: chmod +x ./mvnw
 
-      # Step 5: Build the Java Project with Maven Wrapper
+      # Step 5: Verify Maven Wrapper Permissions
+      - name: Verify Maven Wrapper Permissions
+        run: ls -l ./mvnw  # Ensure it has execute permissions
+
+      # Step 6: Build the Java Project with Maven Wrapper
       - name: Build Java Code
         run: |
           echo "Building Java project..."
           ./mvnw clean compile -DskipTests
 
-      # Step 6: OWASP Dependency-Check for Vulnerabilities
+      # Step 7: OWASP Dependency-Check for Vulnerabilities
       - name: Run OWASP Dependency-Check
         run: |
           echo "Running OWASP Dependency-Check..."
           ./mvnw org.owasp:dependency-check-maven:check -Dformat=ALL
         continue-on-error: true  # Allow workflow to continue even if vulnerabilities are found
 
-      # Step 7: (Optional) Trivy Security Scanner (Application-level & Dependency scan)
+      # Step 8: (Optional) Trivy Security Scanner (Application-level & Dependency scan)
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
@@ -74,11 +79,13 @@ jobs:
           severity: "CRITICAL,HIGH"
         continue-on-error: true  # Allow workflow to continue even if vulnerabilities are found
 
-      # Step 8: (Optional) CodeQL Manual Setup (For private repo)
-      - name: Setup CodeQL
-        uses: github/codeql-action/init@v2
+      # Step 9: (Optional) CodeQL Manual Setup (For private repo)
+      - name: Setup CodeQL (v3)
+        if: ${{ github.event.repository.private == false || github.event.repository.security_events_enabled }}
+        uses: github/codeql-action/init@v3
         with:
           languages: "java"
 
       - name: Run CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        if: ${{ github.event.repository.private == false || github.event.repository.security_events_enabled }}
+        uses: github/codeql-action/analyze@v3
