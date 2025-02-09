@@ -31,7 +31,7 @@ jobs:
 
     steps:
       # Step 1: Checkout the repository
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -48,20 +48,24 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      # Step 4: Build the Java Project with Maven Wrapper (No need for cd)
+      # Step 4: Grant execute permission for Maven Wrapper
+      - name: Grant execute permission for Maven wrapper
+        run: chmod +x ./mvnw
+
+      # Step 5: Build the Java Project with Maven Wrapper
       - name: Build Java Code
         run: |
           echo "Building Java project..."
           ./mvnw clean compile -DskipTests
 
-      # Step 5: OWASP Dependency-Check for Vulnerabilities
+      # Step 6: OWASP Dependency-Check for Vulnerabilities
       - name: Run OWASP Dependency-Check
         run: |
           echo "Running OWASP Dependency-Check..."
           ./mvnw org.owasp:dependency-check-maven:check -Dformat=ALL
         continue-on-error: true  # Allow workflow to continue even if vulnerabilities are found
 
-      # Step 6: (Optional) Trivy Security Scanner (Application-level & Dependency scan)
+      # Step 7: (Optional) Trivy Security Scanner (Application-level & Dependency scan)
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
@@ -70,7 +74,7 @@ jobs:
           severity: "CRITICAL,HIGH"
         continue-on-error: true  # Allow workflow to continue even if vulnerabilities are found
 
-      # Step 7: (Optional) CodeQL Manual Setup (For private repo)
+      # Step 8: (Optional) CodeQL Manual Setup (For private repo)
       - name: Setup CodeQL
         uses: github/codeql-action/init@v2
         with:
