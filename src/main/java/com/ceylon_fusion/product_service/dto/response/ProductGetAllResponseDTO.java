@@ -1,5 +1,6 @@
 package com.ceylon_fusion.product_service.dto.response;
 
+import com.ceylon_fusion.product_service.entity.enums.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,4 +15,5 @@ public class ProductGetAllResponseDTO {
     private Double sellingPrice;
     private String productImageURL;
     private Double productRatingValue;
+    private CategoryType categoryType;
 }

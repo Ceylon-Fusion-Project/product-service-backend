@@ -43,8 +43,8 @@ public class ProductController {
     }
 
     @GetMapping(
-            path = "/get-all-products",
-            params = {"page", "size", "status"}
+            path = "/get-all-products"
+            //params = {"page", "size", "status"}
     )
     public ResponseEntity<StandardResponse> getAllProductsWithSort(
             @RequestParam(value = "status",defaultValue = "true",required = false) boolean activeStatus,
@@ -79,12 +79,6 @@ public class ProductController {
                     break;
                 case "newest":
                     sortSpec = Sort.by("createdDate").descending();
-                    break;
-                case "quantityAsc":
-                    sortSpec = Sort.by("productQuantity").ascending();
-                    break;
-                case "quantityDesc":
-                    sortSpec = Sort.by("productQuantity").descending();
                     break;
                 default:
                     sortSpec = Sort.by("productName").ascending();
@@ -207,11 +201,8 @@ public class ProductController {
                 case "newest":
                     sortSpec = Sort.by("createdDate").descending();
                     break;
-                case "quantityAsc":
-                    sortSpec = Sort.by("productQuantity").ascending();
-                    break;
-                case "quantityDesc":
-                    sortSpec = Sort.by("productQuantity").descending();
+                case "category":
+                    sortSpec = Sort.by("categoryType").ascending();
                     break;
                 default:
                     sortSpec = Sort.by("productName").ascending();
