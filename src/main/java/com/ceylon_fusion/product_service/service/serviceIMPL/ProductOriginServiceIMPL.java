@@ -114,7 +114,8 @@ public class ProductOriginServiceIMPL implements ProductOriginService {
     @Override
     public ProductOriginDTO getProductOriginByOriginId(Integer originId) {
         if (productOriginRepo.existsById(originId)) {
-            ProductOrigin productOrigin = productOriginRepo.getReferenceById(originId);
+            ProductOrigin productOrigin = productOriginRepo.findById(originId)
+                    .orElseThrow(() -> new RuntimeException("Product Origin Not Found!"));
             return productOriginMapper.productOriginEntityToProductOriginDTO(productOrigin);
         } else {
             throw new RuntimeException("Product Origin Not Found!");

@@ -1,5 +1,6 @@
 package com.ceylon_fusion.product_service.dto;
 
+import com.ceylon_fusion.product_service.entity.enums.CategoryType;
 import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,12 +18,12 @@ public class ProductDTO {
     private String productName;
     private String productDescription;
     private Double sellingPrice;
-    private double productQuantity;
     private MeasuringUnitType measuringUnitType;
     private List<String> productImageURLs;
     private LocalDate createdDate;
     private LocalDate updatedDate;
     private boolean productActiveState;
     private Double productRatingValue;
+    private CategoryType categoryType;
     private Integer productOriginID;
 }

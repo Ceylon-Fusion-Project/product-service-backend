@@ -1,5 +1,6 @@
 package com.ceylon_fusion.product_service.entity;
 
+import com.ceylon_fusion.product_service.entity.enums.CategoryType;
 import com.ceylon_fusion.product_service.entity.enums.MeasuringUnitType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -40,17 +41,14 @@ public class Product {
     @Column(name = "selling_price", nullable = false)
     private Double sellingPrice;
 
-    @Column(name = "product_quantity", nullable = false)
-    private Double productQuantity;
     @Enumerated(EnumType.STRING)
     @Column(name = "measuring_unit_type", nullable = false)
     private MeasuringUnitType measuringUnitType;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_urls")
     private List<String> productImageURLs = new ArrayList<>();
-
 
     @CreationTimestamp
     @Column(name = "created_date", nullable = false, updatable = false)
@@ -65,6 +63,10 @@ public class Product {
 
     @Column(name = "product_avg_rating")
     private Double productRatingValue = 0.0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category_type", nullable = false)
+    private CategoryType categoryType;
 
     // OneToMany -> Certification
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -161,7 +161,7 @@ public class ProductServiceIMPL implements ProductService {
                     productDTO.getProductName(),
                     productDTO.getProductDescription(),
                     productDTO.getSellingPrice(),
-                    productDTO.getProductQuantity(),
+                    productDTO.getCategoryType(),
                     productDTO.getMeasuringUnitType(),
                     productDTO.getProductImageURLs(),
                     productDTO.getProductRatingValue(),
@@ -196,11 +196,6 @@ public class ProductServiceIMPL implements ProductService {
             // Update Selling Price
             if (productUpdateDetailsRequestDTO.getSellingPrice() >= 0) {
                 existingProduct.setSellingPrice(productUpdateDetailsRequestDTO.getSellingPrice());
-            }
-
-            // Update Product Quantity
-            if (productUpdateDetailsRequestDTO.getProductQuantity() >= 0) {
-                existingProduct.setProductQuantity(productUpdateDetailsRequestDTO.getProductQuantity());
             }
 
             // Update Measuring Unit Type
