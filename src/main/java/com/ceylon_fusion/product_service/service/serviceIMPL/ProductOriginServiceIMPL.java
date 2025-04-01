@@ -2,15 +2,23 @@ package com.ceylon_fusion.product_service.service.serviceIMPL;
 
 import com.ceylon_fusion.product_service.dto.CertificationDTO;
 import com.ceylon_fusion.product_service.dto.ProductOriginDTO;
+import com.ceylon_fusion.product_service.dto.paginated.PaginatedGetAllOrigins;
 import com.ceylon_fusion.product_service.dto.request.ProductOriginSaveAndUpdateRequestDTO;
+import com.ceylon_fusion.product_service.dto.response.ProductOriginGetAllProductDetailsResponseDTO;
 import com.ceylon_fusion.product_service.entity.ProductOrigin;
 import com.ceylon_fusion.product_service.repo.ProductOriginRepo;
 import com.ceylon_fusion.product_service.repo.ProductRepo;
 import com.ceylon_fusion.product_service.service.ProductOriginService;
 import com.ceylon_fusion.product_service.util.mappers.ProductOriginMapper;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductOriginServiceIMPL implements ProductOriginService {
@@ -57,12 +65,18 @@ public class ProductOriginServiceIMPL implements ProductOriginService {
 //        }
 //    }
 
+    @Transactional
     @Override
-    public CertificationDTO updateOrigin(ProductOriginSaveAndUpdateRequestDTO updateRequestDTO, Integer originId) {
-
+    public ProductOriginDTO updateOrigin(ProductOriginSaveAndUpdateRequestDTO updateRequestDTO, Integer originId) {
         if (productOriginRepo.existsById(originId)) {
 
-            ProductOrigin existingproductOrigin = productOriginRepo.getReferenceById(originId);
+            //ProductOrigin existingproductOrigin = productOriginRepo.findById(originId);
+            Optional<ProductOrigin> optional = productOriginRepo.findById(originId);
+            if (optional.isEmpty()) {
+                throw new NotFoundException("Origin not found");
+            }
+            ProductOrigin existingproductOrigin = optional.get();
+            System.out.println(existingproductOrigin);
 
             if (updateRequestDTO.getStateLocation() != null) {
                 existingproductOrigin.setStateLocation(updateRequestDTO.getStateLocation());
@@ -91,7 +105,7 @@ public class ProductOriginServiceIMPL implements ProductOriginService {
 
             productOriginRepo.save(existingproductOrigin);
 
-            return productOriginMapper.productOriginEntityToCertificationDTO(existingproductOrigin);
+            return productOriginMapper.productOriginEntityToProductOriginDTO(existingproductOrigin);
         } else {
             throw new RuntimeException("Product Origin Details Not Found!");
         }
@@ -119,6 +133,24 @@ public class ProductOriginServiceIMPL implements ProductOriginService {
             return productOriginMapper.productOriginEntityToProductOriginDTO(productOrigin);
         } else {
             throw new RuntimeException("Product Origin Not Found!");
+        }
+    }
+
+    @Override
+    public PaginatedGetAllOrigins getAllOrigins(Pageable pageable) {
+        Page<ProductOrigin> productOrigins = productOriginRepo.findAll(pageable);
+
+        if(!productOrigins.isEmpty()){
+            //Map the ProductOrigin Entity to ProductOriginGetAllProductDetailsResponseDTO
+            List<ProductOriginGetAllProductDetailsResponseDTO> responseDTO =
+                    productOriginMapper.productOriginEntityListToProductOriginGetAllProductDetailsResponseDTOList(productOrigins);
+
+            return new PaginatedGetAllOrigins(
+                    responseDTO,
+                    productOriginRepo.count()
+                    );
+        }else {
+            throw new RuntimeException("No Product Origins Found!");
         }
     }
 }

@@ -6,6 +6,9 @@ import com.ceylon_fusion.product_service.dto.request.ProductOriginSaveAndUpdateR
 import com.ceylon_fusion.product_service.dto.response.ProductOriginGetAllProductDetailsResponseDTO;
 import com.ceylon_fusion.product_service.entity.ProductOrigin;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProductOriginMapper {
@@ -16,4 +19,6 @@ public interface ProductOriginMapper {
     CertificationDTO productOriginEntityToCertificationDTO(ProductOrigin existingproductOrigin);
 
     ProductOrigin productOriginSaveAndUpdateRequestDTOToProductOriginEntity(ProductOriginSaveAndUpdateRequestDTO productOriginSaveRequestDTO);
+
+    List<ProductOriginGetAllProductDetailsResponseDTO> productOriginEntityListToProductOriginGetAllProductDetailsResponseDTOList(Page<ProductOrigin> productOrigins);
 }
