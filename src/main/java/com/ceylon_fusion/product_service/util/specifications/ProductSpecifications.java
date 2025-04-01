@@ -107,4 +107,14 @@ public class ProductSpecifications {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("productActiveState"), activeStatus);
     }
+
+    public static Specification<Product> hasCategoryType(String categoryType) {
+        return (root, query, criteriaBuilder) -> {
+            if (categoryType == null || categoryType.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("categoryType"), categoryType.toUpperCase());
+        };
+    }
+
 }

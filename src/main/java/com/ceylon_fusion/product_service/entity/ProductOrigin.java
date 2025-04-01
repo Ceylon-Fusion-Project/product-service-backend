@@ -21,7 +21,7 @@ import java.util.Set;
 public class ProductOrigin {
     @Id
     @Column(name = "origin_id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer originID;
 
     //OneToMany -> Product

@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class Certification {
     @Id
     @Column(name = "certification_id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer certificationID;
 
     // ManyToOne -> Product

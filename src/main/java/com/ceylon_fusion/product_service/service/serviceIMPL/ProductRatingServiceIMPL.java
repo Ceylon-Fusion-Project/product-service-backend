@@ -36,35 +36,71 @@ public class ProductRatingServiceIMPL implements ProductRatingService {
     @Autowired
     private ProductRatingMapper productRatingMapper;
 
+//    @Override
+//    public String saveProductRating(ProductRatingSaveRequestDTO productRatingSaveRequestDTO) {
+//        Integer productId = productRatingSaveRequestDTO.getProduct();
+//
+//        if(productRepo.existsById(productId)){
+//
+//            ProductRating newProductRating = new ProductRating(
+//                    productRepo.findProductByProductIDEquals(productId),
+//                    productRatingSaveRequestDTO.getCustomer(),
+//                    productRatingSaveRequestDTO.getProductRating(),
+//                    productRatingSaveRequestDTO.getProductReview()
+//            );
+//
+//            productRatingRepo.save(newProductRating);
+//
+//            // Get the new average rating value
+//            Double newRatingValue = productRatingRepo.getAverageByProductID(productId);
+//
+//            // Update the product with the new average rating value
+//            Product product = productRepo.findProductByProductIDEquals(productId);
+//
+//            product.setProductRatingValue(newRatingValue);
+//            productRepo.save(product);
+//
+//            return "Product Rating of " + product.getProductName() + " is Updated!";
+//        }else{
+//            throw new RuntimeException("Product Not Found");
+//        }
+//    }
+
     @Override
     public String saveProductRating(ProductRatingSaveRequestDTO productRatingSaveRequestDTO) {
         Integer productId = productRatingSaveRequestDTO.getProduct();
 
         if(productRepo.existsById(productId)){
+            try {
+                ProductRating newProductRating = new ProductRating(
+                        productRepo.findProductByProductIDEquals(productId),
+                        productRatingSaveRequestDTO.getCustomer(),
+                        productRatingSaveRequestDTO.getProductRating(),
+                        productRatingSaveRequestDTO.getProductReview()
+                );
 
-            ProductRating newProductRating = new ProductRating(
-                    productRepo.findProductByProductIDEquals(productId),
-                    productRatingSaveRequestDTO.getCustomer(),
-                    productRatingSaveRequestDTO.getProductRating(),
-                    productRatingSaveRequestDTO.getProductReview()
-            );
+                productRatingRepo.save(newProductRating);
 
-            productRatingRepo.save(newProductRating);
+                // Log the new rating
+                System.out.println("New Rating Saved: " + newProductRating);
 
-            // Get the new average rating value
-            Double newRatingValue = productRatingRepo.getAverageByProductID(productId);
+                // Update the product's average rating
+                Double newRatingValue = productRatingRepo.getAverageByProductID(productId);
+                Product product = productRepo.findProductByProductIDEquals(productId);
 
-            // Update the product with the new average rating value
-            Product product = productRepo.findProductByProductIDEquals(productId);
+                product.setProductRatingValue(newRatingValue);
+                productRepo.save(product);
 
-            product.setProductRatingValue(newRatingValue);
-            productRepo.save(product);
-
-            return "Product Rating of " + product.getProductName() + " is Updated!";
-        }else{
+                return "Product Rating of " + product.getProductName() + " is Updated!";
+            } catch (Exception e) {
+                e.printStackTrace(); // Log the actual error
+                throw new RuntimeException("Failed to save product rating: " + e.getMessage());
+            }
+        } else {
             throw new RuntimeException("Product Not Found");
         }
     }
+
 
     @Override
     public PaginatedGetAllRatingByProductDetailsDTO getProductRatingByProductId(

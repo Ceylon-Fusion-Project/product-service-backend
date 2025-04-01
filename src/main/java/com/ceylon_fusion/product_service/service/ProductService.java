@@ -23,5 +23,5 @@ public interface ProductService {
 
     PaginatedGetAllProductResponseDTO getProductByFiltering(
             String productName, Double minPrice, Double maxPrice, Double averageRating, LocalDate startDate,
-            LocalDate endDate, boolean activeStatus, Pageable pageable);
+            LocalDate endDate,String category, boolean activeStatus, Pageable pageable);
 }
