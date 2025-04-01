@@ -26,7 +26,7 @@ public class Product {
 
     @Id
     @Column(name = "product_id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productID;
 
     @Column(name = "product_code", nullable = false, unique = true, updatable = false)
@@ -62,7 +62,7 @@ public class Product {
     private boolean productActiveState;
 
     @Column(name = "product_avg_rating")
-    private Double productRatingValue = 0.0;
+    private Double productRatingValue = 2.0;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category_type", nullable = false)

@@ -26,17 +26,23 @@ public class ProductRatingController {
     public ResponseEntity<StandardResponse> saveProduct(@RequestBody ProductRatingSaveRequestDTO productRatingSaveRequestDTO) {
         try {
             String response = productRatingService.saveProductRating(productRatingSaveRequestDTO);
-            return new ResponseEntity<StandardResponse>(
+            return new ResponseEntity<>(
                     new StandardResponse(201, "Add Rating Successfully", response),
                     HttpStatus.CREATED
             );
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(
+                    new StandardResponse(400, e.getMessage(), null),
+                    HttpStatus.BAD_REQUEST
+            );
         } catch (Exception e) {
-            return new ResponseEntity<StandardResponse>(
-                    new StandardResponse(409, e.getMessage(), null),
-                    HttpStatus.CONFLICT
+            return new ResponseEntity<>(
+                    new StandardResponse(500, "Internal Server Error", null),
+                    HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
+
 
     @GetMapping(path = "/get-product-ratings-by-product-id")
     public ResponseEntity<StandardResponse> getProductRatingsByProductId(

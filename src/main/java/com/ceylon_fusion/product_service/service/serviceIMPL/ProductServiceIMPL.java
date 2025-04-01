@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -93,6 +94,20 @@ public class ProductServiceIMPL implements ProductService {
             // Map Product DTO List to ProductGetAllResponseDTO List
             List<ProductGetAllResponseDTO> productGetAllResponseDTOS = productMapper
                     .productDTOListToProductGetAllResponseDTOList(productDTOS);
+
+            for(int i = 0; i < productDTOS.size(); i++) {
+                //Get Product by Product ID
+                Product product = productRepo.findProductByProductIDEquals(productDTOS.get(i).getProductID());
+                System.out.println("product = " + product);
+                //Get Product Origin by Product and Map Product Origin Entity to ProductOriginGetAllProductDetailsResponseDTO
+                ProductOrigin productOrigin = productOriginRepo.findProductOriginByProductEquals(product);
+                System.out.println("productOrigin = " + productOrigin);
+                ProductOriginGetAllProductDetailsResponseDTO productOriginResponse = productOriginMapper
+                        .productOriginEntityToProductOriginGetAllProductDetailsResponseDTO(productOrigin);
+                System.out.println("productOriginResponse = " + productOriginResponse);
+                productGetAllResponseDTOS.get(i).setProductOrigin(productOriginResponse);
+                System.out.println("productGetAllResponseDTOS = " + productGetAllResponseDTOS);
+            }
 
 //            for (ProductGetAllResponseDTO productGetAllResponseDTO : productGetAllResponseDTOS) {
 //                if(productRatingRepo.existsByProductID(productGetAllResponseDTO.getProductID()) > 0){
@@ -174,6 +189,7 @@ public class ProductServiceIMPL implements ProductService {
         }
     }
 
+    @Transactional
     @Override
     public ProductDTO updateProductDetails(
             ProductUpdateDetailsRequestDTO productUpdateDetailsRequestDTO,
@@ -181,7 +197,7 @@ public class ProductServiceIMPL implements ProductService {
 
         if (productRepo.existsById(productId)) {
             // Get Product by Product ID
-            Product existingProduct = productRepo.getReferenceById(productId);
+            Product existingProduct = productRepo.findProductByProductIDEquals(productId);
 
             // Update Product name
             if (productUpdateDetailsRequestDTO.getProductName() != null) {
@@ -227,17 +243,16 @@ public class ProductServiceIMPL implements ProductService {
     }
 
     @Override
+    @Transactional
     public String deleteProductByID(Integer productId) {
         // Get Product by Product ID
-        if (productRepo.existsById(productId)) {
-            String response = productRepo.getReferenceById(productId).getProductName() + " Deleted!";
-
-            //delete product
-            productRepo.deleteById(productId);
-            return response;
-        } else {
-            throw new RuntimeException("Product Not Found");
-        }
+        return productRepo.findById(productId)
+                .map(product -> {
+                    String response = product.getProductName() + " Deleted!";
+                    productRepo.delete(product);  // delete by entity
+                    return response;
+                })
+                .orElseThrow(() -> new RuntimeException("Product Not Found"));
     }
 
     @Override
@@ -248,6 +263,7 @@ public class ProductServiceIMPL implements ProductService {
             Double averageRating,
             LocalDate startDate,
             LocalDate endDate,
+            String category,
             boolean activeStatus,
             Pageable pageable
     ) {
@@ -256,7 +272,8 @@ public class ProductServiceIMPL implements ProductService {
                 .and(ProductSpecifications.hasName(productName))
                 .and(ProductSpecifications.hasPriceRange(minPrice, maxPrice))
                 .and(ProductSpecifications.hasAverageRating(averageRating))
-                .and(ProductSpecifications.hasCreatedDate(startDate, endDate));
+                .and(ProductSpecifications.hasCreatedDate(startDate, endDate))
+                .and(ProductSpecifications.hasCategoryType(category));
 
         // Get all products with active status
         Page<Product> products = productRepo.findAll(specification, pageable);

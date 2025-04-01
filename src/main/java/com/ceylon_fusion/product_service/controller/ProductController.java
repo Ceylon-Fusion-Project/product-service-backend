@@ -27,6 +27,7 @@ public class ProductController {
 
     @PostMapping(path = "/save-product")
     public ResponseEntity<StandardResponse> saveProduct(@RequestBody ProductSaveRequestDTO productSaveRequestDTO) {
+        System.out.println("Incoming product: " + productSaveRequestDTO);
         try {
             ProductDTO response = productService.saveProduct(productSaveRequestDTO);
 
@@ -168,11 +169,12 @@ public class ProductController {
             @RequestParam(required = false) Double averageRating,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String category,
             @RequestParam(required = false,defaultValue = "true" ) boolean activeStatus,
             @RequestParam(value = "sort",required = false,defaultValue = "nameAsc") String sort,
             @RequestParam(required = false,defaultValue = "0") Integer page,
             @RequestParam(required = false,defaultValue = "10") Integer size
-    ) {
+            ) {
         try {
             // Sort Specification
             Sort sortSpec;
@@ -210,7 +212,7 @@ public class ProductController {
 
             // Page Request Specification
             PageRequest pageRequest = PageRequest.of(page, size, sortSpec);
-            PaginatedGetAllProductResponseDTO response = productService.getProductByFiltering(productName, minPrice, maxPrice, averageRating, startDate, endDate,activeStatus, pageRequest);
+            PaginatedGetAllProductResponseDTO response = productService.getProductByFiltering(productName, minPrice, maxPrice, averageRating, startDate, endDate,category, activeStatus, pageRequest);
             return new ResponseEntity<StandardResponse>(
                     new StandardResponse(200, "Product Found", response),
                     HttpStatus.OK

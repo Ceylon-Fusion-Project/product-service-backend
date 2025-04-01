@@ -22,5 +22,4 @@ public interface ProductRepo extends JpaRepository<Product, Integer>, JpaSpecifi
     long countProductByProductActiveStateEquals(boolean activeStatus);
 
     Product findProductByProductIDEquals(Integer productId);
-
 }

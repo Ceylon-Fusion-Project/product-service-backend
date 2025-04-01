@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class ProductRating {
     @Id
     @Column(name = "product_rating_id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productRatingID;
 
     // OneToMany -> Product
