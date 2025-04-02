@@ -23,5 +23,11 @@ public interface ProductRatingMapper {
     List<ProductRatingGetAllByUserDetailsResponseDTO>
     productRatingEntityListToProductRatingGetAllByUserDetailsResponseDTOList(List<ProductRating> content);
 
+    @Mapping(source = "product.productID", target = "productID")
+    @Mapping(source = "customer", target = "customer")
+    @Mapping(source = "productRating", target = "productRating")
+    @Mapping(source = "productReview", target = "productReview")
+    @Mapping(source = "createdDate", target = "createdDate")
+    @Mapping(source = "updatedDate", target = "updatedDate")
     ProductRatingDTO productRatingEntityToProductRatingDTO(ProductRating existingProductRating);
 }

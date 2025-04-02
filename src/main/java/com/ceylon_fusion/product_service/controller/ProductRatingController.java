@@ -135,23 +135,25 @@ public class ProductRatingController {
     }
 
     @PatchMapping(
-            path = "/update-product-rating",
-            params = "productRatingID"
+            path = "/update-product-rating"
+            //params = "productRatingID"
     )
     public ResponseEntity<StandardResponse> updateProductDetails(
             @RequestBody ProductRatingUpdateDetailsRequestDTO productRatingUpdateDetailsRequestDTO,
             @RequestParam(value = "productRatingID") Integer productRatingId
     ) {
         try {
+            System.out.println(productRatingUpdateDetailsRequestDTO);
             ProductRatingDTO response = productRatingService.updateProductRating(productRatingUpdateDetailsRequestDTO, productRatingId);
            return new ResponseEntity<StandardResponse>(
                     new StandardResponse(200, "Product Rating Updated Successfully", response.getUpdatedDate()),
                     HttpStatus.OK
             );
-        } catch (Exception e) {
-            return new ResponseEntity<StandardResponse>(
-                    new StandardResponse(404, e.getMessage(), null),
-                    HttpStatus.NOT_FOUND
+        }catch (Exception e) {
+            e.printStackTrace(); // <-- this will help
+            return new ResponseEntity<>(
+                    new StandardResponse(500, "Error: " + e.getMessage(), null),
+                    HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
