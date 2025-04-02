@@ -2,6 +2,7 @@ package com.ceylon_fusion.product_service.controller;
 
 import com.ceylon_fusion.product_service.dto.CertificationDTO;
 import com.ceylon_fusion.product_service.dto.paginated.PaginatedGetAllCertificationsDTO;
+import com.ceylon_fusion.product_service.dto.paginated.PaginatedGetAllOrigins;
 import com.ceylon_fusion.product_service.dto.request.CertificateSaveRequestDTO;
 import com.ceylon_fusion.product_service.dto.request.CertificationUpdateRequestDTO;
 import com.ceylon_fusion.product_service.service.CertificationService;
@@ -85,8 +86,8 @@ public class CertificationController {
     }
 
     @PatchMapping(
-            path = "/update-certificate",
-            params = "certificationID"
+            path = "/update-certificate"
+            //params = "certificationID"
     )
     public ResponseEntity<StandardResponse> updateCertificateDetails(
             @RequestBody CertificationUpdateRequestDTO certificationUpdateRequestDTO,
@@ -107,8 +108,8 @@ public class CertificationController {
     }
 
     @DeleteMapping(
-            path = "delete-certificate-by-id",
-            params = "certificationID"
+            path = "delete-certificate-by-id"
+            //params = "certificationID"
     )
     public ResponseEntity<StandardResponse> deleteProductRatingByID(
             @RequestParam(value = "certificationID") Integer certificationId)
@@ -125,5 +126,26 @@ public class CertificationController {
                     HttpStatus.NOT_FOUND
             );
         }
+    }
+
+    @GetMapping(path = "/get-all-certificates")
+    public ResponseEntity<StandardResponse> getAllCertificates(
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "size") Integer size
+    ) {
+        try {
+            PageRequest pageRequest = PageRequest.of(page, size);
+            PaginatedGetAllCertificationsDTO response = certificationService.getAllCertificates(pageRequest);
+            return new ResponseEntity<StandardResponse>(
+                    new StandardResponse(200, "Get All Certificates", response),
+                    HttpStatus.OK
+            );
+        } catch(Exception e){
+            return new ResponseEntity<StandardResponse>(
+                    new StandardResponse(404, e.getMessage(), null),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
     }
 }

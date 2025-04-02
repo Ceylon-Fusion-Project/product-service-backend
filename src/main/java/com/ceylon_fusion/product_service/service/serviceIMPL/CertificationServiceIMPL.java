@@ -2,25 +2,31 @@ package com.ceylon_fusion.product_service.service.serviceIMPL;
 
 import com.ceylon_fusion.product_service.dto.CertificationDTO;
 import com.ceylon_fusion.product_service.dto.paginated.PaginatedGetAllCertificationsDTO;
+import com.ceylon_fusion.product_service.dto.paginated.PaginatedGetAllOrigins;
 import com.ceylon_fusion.product_service.dto.paginated.PaginatedGetAllRatingByProductDetailsDTO;
 import com.ceylon_fusion.product_service.dto.request.CertificateSaveRequestDTO;
 import com.ceylon_fusion.product_service.dto.request.CertificationUpdateRequestDTO;
+import com.ceylon_fusion.product_service.dto.response.ProductOriginGetAllProductDetailsResponseDTO;
 import com.ceylon_fusion.product_service.dto.response.ProductRatingGetAllByProductDetailsResponseDTO;
 import com.ceylon_fusion.product_service.entity.Certification;
 import com.ceylon_fusion.product_service.entity.Product;
+import com.ceylon_fusion.product_service.entity.ProductOrigin;
 import com.ceylon_fusion.product_service.entity.ProductRating;
 import com.ceylon_fusion.product_service.repo.CertificationRepo;
 import com.ceylon_fusion.product_service.repo.ProductRepo;
 import com.ceylon_fusion.product_service.service.CertificationService;
 import com.ceylon_fusion.product_service.util.mappers.CertificationMapper;
+import jakarta.ws.rs.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CertificationServiceIMPL implements CertificationService {
@@ -83,13 +89,18 @@ public class CertificationServiceIMPL implements CertificationService {
         }
     }
 
+    @Transactional
     @Override
     public CertificationDTO updateCertificate(
             CertificationUpdateRequestDTO certificationUpdateRequestDTO, Integer certificationId)
     {
         if(certificationRepo.existsById(certificationId)) {
             // Get the existing certification
-            Certification existingCertification = certificationRepo.getReferenceById(certificationId);
+            Optional<Certification> optional = certificationRepo.findById(certificationId);
+            if (optional.isEmpty()) {
+                throw new NotFoundException("Certificate not found");
+            }
+            Certification existingCertification = optional.get();
 
             if(certificationUpdateRequestDTO.getProductID() != null){
                 existingCertification.setProduct(
@@ -139,6 +150,28 @@ public class CertificationServiceIMPL implements CertificationService {
 
         } else {
             throw new RuntimeException("Certificate Not Found");
+        }
+    }
+
+    @Override
+    public PaginatedGetAllCertificationsDTO getAllCertificates(Pageable pageable) {
+        Page<Certification> certifications = certificationRepo.findAll(pageable);
+
+        if(!certifications.isEmpty()){
+            //Map the Certification Entity to Certification DTO
+            List<CertificationDTO> responseDTO =
+                    certificationMapper.certificationPageToCertificationDTOList(certifications);
+
+            for(int i = 0; i < responseDTO.size(); i++){
+                responseDTO.get(i).setProductID(certifications.getContent().get(i).getProduct().getProductID());
+            }
+
+            return new PaginatedGetAllCertificationsDTO(
+                    responseDTO,
+                    certificationRepo.count()
+            );
+        }else {
+            throw new RuntimeException("No Certificates Found!");
         }
     }
 }

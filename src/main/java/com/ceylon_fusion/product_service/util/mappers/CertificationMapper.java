@@ -4,6 +4,7 @@ import com.ceylon_fusion.product_service.dto.CertificationDTO;
 import com.ceylon_fusion.product_service.dto.response.CertificationGetAllProductDetailsResponseDTO;
 import com.ceylon_fusion.product_service.entity.Certification;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface CertificationMapper {
     CertificationDTO certificationEntityToCertificationDTO(Certification newCertification);
 
     List<CertificationDTO> certificationEntityListToCertificationDTOList(List<Certification> content);
+
+    List<CertificationDTO> certificationPageToCertificationDTOList(Page<Certification> certifications);
 }

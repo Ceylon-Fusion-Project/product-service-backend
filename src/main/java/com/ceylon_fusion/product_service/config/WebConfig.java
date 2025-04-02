@@ -12,5 +12,9 @@ public class WebConfig implements WebMvcConfigurer {
         // Map /images/** to D:/product_images/
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:/D:/Final-Year-Project/Images/product_images/");
+
+        //Serve uploaded files (certificates, etc.)
+        registry.addResourceHandler("/files/**")
+                .addResourceLocations("file:/D:/Final-Year-Project/Images/product_files/");
     }
 }
