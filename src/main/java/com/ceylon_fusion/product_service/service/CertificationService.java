@@ -15,4 +15,6 @@ public interface CertificationService {
     CertificationDTO updateCertificate(CertificationUpdateRequestDTO certificationUpdateRequestDTO, Integer certificationId);
 
     String deleteCertificationByID(Integer certificationId);
+
+    PaginatedGetAllCertificationsDTO getAllCertificates(Pageable pageable);
 }

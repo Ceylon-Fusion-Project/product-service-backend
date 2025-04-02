@@ -7,19 +7,24 @@ import com.ceylon_fusion.product_service.dto.request.ProductRatingSaveRequestDTO
 import com.ceylon_fusion.product_service.dto.request.ProductRatingUpdateDetailsRequestDTO;
 import com.ceylon_fusion.product_service.dto.response.ProductRatingGetAllByProductDetailsResponseDTO;
 import com.ceylon_fusion.product_service.dto.response.ProductRatingGetAllByUserDetailsResponseDTO;
+import com.ceylon_fusion.product_service.entity.Certification;
 import com.ceylon_fusion.product_service.entity.Product;
 import com.ceylon_fusion.product_service.entity.ProductRating;
 import com.ceylon_fusion.product_service.repo.ProductRatingRepo;
 import com.ceylon_fusion.product_service.repo.ProductRepo;
 import com.ceylon_fusion.product_service.service.ProductRatingService;
 import com.ceylon_fusion.product_service.util.mappers.ProductRatingMapper;
+import jakarta.ws.rs.NotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductRatingServiceIMPL implements ProductRatingService {
@@ -66,6 +71,7 @@ public class ProductRatingServiceIMPL implements ProductRatingService {
 //        }
 //    }
 
+    @Transactional
     @Override
     public String saveProductRating(ProductRatingSaveRequestDTO productRatingSaveRequestDTO) {
         Integer productId = productRatingSaveRequestDTO.getProduct();
@@ -160,6 +166,7 @@ public class ProductRatingServiceIMPL implements ProductRatingService {
         }
     }
 
+    @Transactional
     @Override
     public ProductRatingDTO updateProductRating(
             ProductRatingUpdateDetailsRequestDTO productRatingUpdateDetailsRequestDTO,
@@ -167,7 +174,13 @@ public class ProductRatingServiceIMPL implements ProductRatingService {
     {
         if(productRatingRepo.existsById(productRatingId)){
             // Get the existing product rating
-            ProductRating existingProductRating = productRatingRepo.getReferenceById(productRatingId);
+            Optional<ProductRating> optional = productRatingRepo.findById(productRatingId);
+            if (optional.isEmpty()) {
+                throw new RuntimeException("Product rating not found");
+            }
+            ProductRating existingProductRating = optional.get();
+
+            System.out.println("existingProductRating = " + existingProductRating);
 
             if(productRatingUpdateDetailsRequestDTO.getProductRating() != null){
                 existingProductRating.setProductRating(productRatingUpdateDetailsRequestDTO
@@ -177,6 +190,8 @@ public class ProductRatingServiceIMPL implements ProductRatingService {
                 existingProductRating.setProductReview(productRatingUpdateDetailsRequestDTO
                         .getProductReview());
             }
+
+            existingProductRating.setUpdatedDate(LocalDate.now());
 
             productRatingRepo.save(existingProductRating);
 
